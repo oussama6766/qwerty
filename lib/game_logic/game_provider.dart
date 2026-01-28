@@ -575,12 +575,6 @@ class GameProvider extends ChangeNotifier {
         }
       }
     }
-    if (player2 != null && !snake.hasPowerUp(PowerUpType.ghost)) {
-      Snake other = (snake == player1) ? player2! : player1;
-      if (other.body.contains(head)) {
-        _killSnake(snake, (snake == player1) ? "lose" : "win");
-      }
-    }
   }
 
   void _spawnPowerUp() {
