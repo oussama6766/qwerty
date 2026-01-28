@@ -14,7 +14,7 @@ enum ControlMode { swipe, joystick }
 class GameProvider extends ChangeNotifier {
   static const int rows = 30;
   static const int columns = 20;
-  static const int baseTickMs = 150;
+  static const int baseTickMs = 100; // Reduced for ultra-smooth feel
   int _tickCount = 0;
 
   late Snake player1;
