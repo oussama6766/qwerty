@@ -702,18 +702,76 @@ class GamePainter extends CustomPainter {
         drawY = drawY + (targetY - drawY) * progress;
       }
 
+      final rect = Rect.fromLTWH(
+        drawX * cellWidth + 1,
+        drawY * cellHeight + 1,
+        cellWidth - 2,
+        cellHeight - 2,
+      );
+
+      // Draw body segment
       canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTWH(
-            drawX * cellWidth + 1,
-            drawY * cellHeight + 1,
-            cellWidth - 2,
-            cellHeight - 2,
-          ),
-          Radius.circular(isNeon ? 4 : 0),
-        ),
+        RRect.fromRectAndRadius(rect, Radius.circular(isNeon ? 8 : 4)),
         paint,
       );
+
+      // Draw eyes on head
+      if (i == 0) {
+        final eyePaint = Paint()..color = Colors.white;
+        final pupilPaint = Paint()..color = Colors.black;
+        double eyeSize = cellWidth * 0.15;
+        double pupilSize = eyeSize * 0.5;
+
+        // Eye offsets based on direction
+        Offset eye1, eye2;
+        switch (snake.direction) {
+          case Direction.up:
+            eye1 = Offset(
+              rect.left + rect.width * 0.25,
+              rect.top + rect.height * 0.25,
+            );
+            eye2 = Offset(
+              rect.right - rect.width * 0.25,
+              rect.top + rect.height * 0.25,
+            );
+            break;
+          case Direction.down:
+            eye1 = Offset(
+              rect.left + rect.width * 0.25,
+              rect.bottom - rect.height * 0.25,
+            );
+            eye2 = Offset(
+              rect.right - rect.width * 0.25,
+              rect.bottom - rect.height * 0.25,
+            );
+            break;
+          case Direction.left:
+            eye1 = Offset(
+              rect.left + rect.width * 0.25,
+              rect.top + rect.height * 0.25,
+            );
+            eye2 = Offset(
+              rect.left + rect.width * 0.25,
+              rect.bottom - rect.height * 0.25,
+            );
+            break;
+          case Direction.right:
+            eye1 = Offset(
+              rect.right - rect.width * 0.25,
+              rect.top + rect.height * 0.25,
+            );
+            eye2 = Offset(
+              rect.right - rect.width * 0.25,
+              rect.bottom - rect.height * 0.25,
+            );
+            break;
+        }
+
+        canvas.drawCircle(eye1, eyeSize, eyePaint);
+        canvas.drawCircle(eye2, eyeSize, eyePaint);
+        canvas.drawCircle(eye1, pupilSize, pupilPaint);
+        canvas.drawCircle(eye2, pupilSize, pupilPaint);
+      }
     }
   }
 
