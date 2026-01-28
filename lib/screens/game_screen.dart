@@ -124,20 +124,25 @@ class GameScreenContent extends StatelessWidget {
                           borderRadius: BorderRadius.circular(isNeon ? 10 : 0),
                           child: LayoutBuilder(
                             builder: (context, constraints) {
-                              final cellWidth =
-                                  constraints.maxWidth / GameProvider.columns;
-                              final cellHeight =
-                                  constraints.maxHeight / GameProvider.rows;
-                              return CustomPaint(
-                                size: Size(
-                                  constraints.maxWidth,
-                                  constraints.maxHeight,
-                                ),
-                                painter: GamePainter(
-                                  game,
-                                  settings,
-                                  cellWidth,
-                                  cellHeight,
+                              final cellSize =
+                                  (constraints.maxWidth / GameProvider.columns <
+                                      constraints.maxHeight / GameProvider.rows)
+                                  ? constraints.maxWidth / GameProvider.columns
+                                  : constraints.maxHeight / GameProvider.rows;
+
+                              final boardWidth =
+                                  cellSize * GameProvider.columns;
+                              final boardHeight = cellSize * GameProvider.rows;
+
+                              return Center(
+                                child: CustomPaint(
+                                  size: Size(boardWidth, boardHeight),
+                                  painter: GamePainter(
+                                    game,
+                                    settings,
+                                    cellSize,
+                                    cellSize,
+                                  ),
                                 ),
                               );
                             },
