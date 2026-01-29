@@ -748,3 +748,9 @@ class GameProvider extends ChangeNotifier {
             .update({'status': 'ready'})
             .eq('room_code', d['room_code']);
       }
+      return d;
+    } catch (e) {
+      return null;
+    }
+  }
+}
