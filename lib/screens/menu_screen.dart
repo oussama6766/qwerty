@@ -457,17 +457,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 if (loading)
                   const CircularProgressIndicator()
                 else ...[
-                  TextField(
-                    controller: _createCodeController,
-                    decoration: InputDecoration(
-                      hintText: s.getText('room_code_hint'),
-                    ),
-                    style: TextStyle(
-                      color: s.currentTheme == GameTheme.neon
-                          ? Colors.white
-                          : Colors.black,
-                    ),
-                  ),
+                  // Removed manual code TextField
                   _buildToggle(
                     s.getText('wall_pass_label'),
                     tempW,
@@ -517,11 +507,8 @@ class _MenuScreenState extends State<MenuScreen> {
                 setState(() => loading = true);
                 final p = GameProvider();
 
-                String code = _createCodeController.text.trim();
-                // If empty, generate random 4-digit code
-                if (code.isEmpty) {
-                  code = (1000 + Random().nextInt(9000)).toString();
-                }
+                // Always generate random 4-digit code
+                String code = (1000 + Random().nextInt(9000)).toString();
 
                 bool ok = await p.createRoomOnServer(
                   code,
