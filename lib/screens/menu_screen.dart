@@ -514,16 +514,35 @@ class _MenuScreenState extends State<MenuScreen> {
             ),
             ElevatedButton(
               onPressed: () async {
-                if (_createCodeController.text.isEmpty) return;
                 setState(() => loading = true);
                 final p = GameProvider();
+
+                String code = _createCodeController.text.trim();
+                // If empty, generate random 4-digit code
+                if (code.isEmpty) {
+                  code = (1000 + Random().nextInt(9000)).toString();
+                }
+
                 bool ok = await p.createRoomOnServer(
-                  _createCodeController.text,
+                  code,
                   tempW,
                   tempP,
                   tempO,
                   tempD,
                 );
+
+                // If creation fails (e.g. code taken), try one more time with a random code
+                if (!ok) {
+                  code = (1000 + Random().nextInt(9000)).toString();
+                  ok = await p.createRoomOnServer(
+                    code,
+                    tempW,
+                    tempP,
+                    tempO,
+                    tempD,
+                  );
+                }
+
                 if (ok && context.mounted) {
                   Navigator.pop(ctx);
                   Navigator.push(
@@ -531,7 +550,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     MaterialPageRoute(
                       builder: (_) => GameScreen(
                         gameType: GameType.online,
-                        roomId: _createCodeController.text,
+                        roomId: code,
                         isHost: true,
                         controlMode: _myControlMode,
                         enableWallPassing: tempW,
@@ -543,6 +562,9 @@ class _MenuScreenState extends State<MenuScreen> {
                   );
                 } else if (context.mounted) {
                   setState(() => loading = false);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(s.getText('room_creation_failed'))),
+                  );
                 }
               },
               child: Text(s.getText('create')),
