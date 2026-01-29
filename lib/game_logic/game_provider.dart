@@ -630,9 +630,15 @@ class GameProvider extends ChangeNotifier {
       obstacles.contains(p);
 
   void resetGame({bool isRemoteTrigger = false}) async {
-    if (!isRemoteTrigger && (_multiplayerService?.isHost ?? false)) {
-      _multiplayerService!.broadcastReplay();
+    if (!isRemoteTrigger && (_multiplayerService?.isHost ?? true)) {
+      if (currentGameType == GameType.online) {
+        _multiplayerService?.broadcastReplay();
+      }
     }
+
+    // We need a reference to the TickerProvider to re-initialize
+    final TickerProvider vsync = _ticker! as TickerProvider;
+
     initGame(
       currentGameType,
       onlineRoomId: currentRoomId,
@@ -643,7 +649,7 @@ class GameProvider extends ChangeNotifier {
       startObstacles: enableObstacles,
       startDuration: initialDuration,
       skipWaiting: true,
-      vsync: _ticker! as TickerProvider,
+      vsync: vsync,
     );
   }
 
@@ -742,9 +748,3 @@ class GameProvider extends ChangeNotifier {
             .update({'status': 'ready'})
             .eq('room_code', d['room_code']);
       }
-      return d;
-    } catch (e) {
-      return null;
-    }
-  }
-}
